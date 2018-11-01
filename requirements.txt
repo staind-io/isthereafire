@@ -1,4 +1,4 @@
 geopy==1.17.0
-requests==2.19.1
 Flask==1.0.2
+requests==2.20.0
 hone==0.1.4
