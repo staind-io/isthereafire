@@ -2,4 +2,4 @@ hone==0.1.4
 geopy==1.17.0
 Flask==1.0.2
 Flask_SocketIO==3.0.2
-requests==2.19.1
+requests==2.20.0
