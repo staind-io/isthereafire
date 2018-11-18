@@ -55,37 +55,30 @@ socketio_app = SocketIO(app)
 
 @socketio_app.on("connect")
 def handle_message():
-    message = "connected"
-    print(f"RECEIVED MESSAGE {message}")
+    """Gets the users IP and sent the location to the webpage"""
     loc = get_loc_from_ip(request.remote_addr)
-    print(f"Received location {loc}")
     lat, lon = loc.split(",")
-    print(f"Found lat:{lat}, long:{lon}")
     address = get_address(lat, lon)
-    print(f"Found address: {address}")
     payload = dict(data=address)
-
-    a = emit("run_update", payload, broadcast=True)
-    print(f"Now emitted: {a}")
-    #return render_template("isthereafire.html", address=address)
+    emit("run_update", payload, broadcast=True)
 
 @app.route("/")
 def hello_world():
-    #loc = get_loc_from_ip(request.remote_addr)
-    #address = get_address(loc.split(",")[0], loc.split(",")[1])
+    # Give a temp placeholder for the address
     return render_template("isthereafire.html", address="Still loading...")
 
 
 if __name__ == "__main__":
     
     # Stop the data collection
-    #data = get_data()
-    data = hone.Hone().convert("modis-data.csv")
+    data = get_data()
+    
+    # This to spin it up faster
+    #data = hone.Hone().convert("modis-data.csv")
 
      
     # Runs the original app
     #app.run(debug=True)
 
-    print("Now running")
     # This now runs the websocketed version
     socketio_app.run(app, debug=True)
