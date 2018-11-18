@@ -6,7 +6,7 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import json
 from flask import Flask, request, render_template
-
+from flask_socketio import SocketIO, emit
 
 def get_loc_from_ip(ip_address):
     if ip_address == "127.0.0.1":
@@ -51,15 +51,34 @@ def get_address(given_lat, given_long):
 
 
 app = Flask(__name__)
+socketio_app = SocketIO(app)
 
+@socketio_app.on("connect")
+def handle_message():
+    """Gets the users IP and sent the location to the webpage"""
+    loc = get_loc_from_ip(request.remote_addr)
+    lat, lon = loc.split(",")
+    address = get_address(lat, lon)
+    payload = dict(data=address)
+    emit("run_update", payload, broadcast=True)
 
 @app.route("/")
 def hello_world():
-    loc = get_loc_from_ip(request.remote_addr)
-    address = get_address(loc.split(",")[0], loc.split(",")[1])
-    return render_template("isthereafire.html", address=address)
+    # Give a temp placeholder for the address
+    return render_template("isthereafire.html", address="Still loading...")
 
 
 if __name__ == "__main__":
+    
+    # Stop the data collection
     data = get_data()
-    app.run(debug=True)
+    
+    # This to spin it up faster
+    #data = hone.Hone().convert("modis-data.csv")
+
+     
+    # Runs the original app
+    #app.run(debug=True)
+
+    # This now runs the websocketed version
+    socketio_app.run(app, debug=True)
