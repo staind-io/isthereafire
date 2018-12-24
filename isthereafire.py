@@ -47,8 +47,12 @@ def get_address(given_lat, given_long):
     return location.address
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 socketio_app = SocketIO(app)
+
+@app.route('/static/<path:path>')
+def send_js(path):
+      return send_from_directory('static', path)
 
 
 @socketio_app.on("connect")
@@ -64,7 +68,7 @@ def handle_message():
 @app.route("/")
 def hello_world():
     # Give a temp placeholder for the address
-    return render_template("isthereafire.html", address="finding location...")
+    return render_template("isthereafire.html", address="Finding 🔥 <br /><img src='Rolling-1.2s-200px.svg'>")
 
 
 if __name__ == "__main__":
