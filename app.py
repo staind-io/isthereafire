@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import requests
 import hone
 from geopy.geocoders import Nominatim
@@ -47,12 +48,14 @@ def get_address(given_lat, given_long):
     return location.address
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path="")
+app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 socketio_app = SocketIO(app)
 
-@app.route('/static/<path:path>')
+
+@app.route("/static/<path:path>")
 def send_js(path):
-      return send_from_directory('static', path)
+    return send_from_directory("static", path)
 
 
 @socketio_app.on("connect")
@@ -68,7 +71,10 @@ def handle_message():
 @app.route("/")
 def hello_world():
     # Give a temp placeholder for the address
-    return render_template("isthereafire.html", address="Finding 🔥 <br /><img src='Rolling-1.2s-200px.svg'>")
+    return render_template(
+        "isthereafire.html",
+        address="Finding 🔥 <br /><img src='Rolling-1.2s-200px.svg'>",
+    )
 
 
 if __name__ == "__main__":
