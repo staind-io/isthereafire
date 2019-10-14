@@ -18,8 +18,9 @@
         height: 100%;
         margin: 0;
         padding: 0;
-          font-size: 5vh;
-            font-family: helvetica;
+        font-size: 5vh;
+        font-family: HelveticaNeue-Light;
+        font-weight: 200;
       }
 
     </style>
@@ -28,18 +29,19 @@
     <p>
     <center>
     <div id="main_info">
-      The nearest 🔥 to you is: {{address}}
+    {{address|safe}}
     </div>
     <center>
 
-        <!-- From https://socket.io/docs/client-api/ -->
-        <!--<script src="/socket.io/socket.io.js"></script> -->
+      <!-- From https://socket.io/docs/client-api/ -->
+      <!--<script src="/socket.io/socket.io.js"></script> -->
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
   <script type="text/javascript">
-     var socket = io.connect('http://' + document.domain + ':' + location.port);
-      socket.on('connect', function(){
-          socket.emit('event_one', {data: 'I\'m connected'});
-      })
+     var socket = io.connect('//' + document.domain + ':' + location.port);
+     socket.on('connect', function(){
+       main_info.innerHTML = "Loading";
+       socket.emit('event_one', {data: 'I\'m connected'});
+     })
     /*<!--( function GetIp(){
      var socket = io()
       socket.on('connect', function(){
@@ -48,9 +50,7 @@
       );
       -->*/
       socket.on('run_update', function(payload){
-        //alert("Received");
-        //alert(payload.data);
-        main_info.innerHTML = "The nearest 🔥  to you is: " + payload.data;
+        main_info.innerHTML = "<p>The nearest 🔥 to you</p><p>" + payload.data + "</p>";
       })
   </script>
   </body>
